@@ -1,0 +1,64 @@
+---
+title: "Untitled"
+format: 
+  html:
+    toc: true
+    number-sections: true
+editor: source
+---
+
+# Titulo principal
+## Subsção
+
+TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO 
+TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO TEXTO
+
+*TEXTO EM ITALICO*
+**TEXTO EM NEGRITO**
+~~TEXTO RISCADO~~
+
+## Criando uma lista nao ordenada
+- item1
+
+- item2
+
+    -subitem1
+    
+    -subitem2
+    
+## Criando uma lista ordenada
+
+1. item 1
+
+2. item 2
+
+3. item 3
+
+## Inserir link
+
+[IFMG - Campus Formiga](https://www.formiga.ifmg.edu.br/){target="_blank"}
+
+## Escrevendo matemática
+
+Integral:
+
+## Celulas de código
+
+Para inserir uma célula de código R em umm arquivo quarto,
+podemos usar atalho 'Ctra + Alt + I' :
+
+## celulas de codigo
+
+para inserir uma celula de codigo R em um arquivo quarto, podemos usar 
+o atalho 'ctrl + alt + i':
+
+
+
+
+```{r}
+#  simulando uma VA com distribuição normal padrao
+x <- rnorm(1000)
+
+# grafico de linha da variavel simulada:
+plot(x, type = "l")
+```
