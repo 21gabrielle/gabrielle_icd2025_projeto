@@ -6,7 +6,7 @@ author: "Seu Nome"
 date: 2025-04-02
 format: 
   html:
-    theme: pulse
+    theme: quartz
     embed-resources: true
     toc: true
     number-sections: true
