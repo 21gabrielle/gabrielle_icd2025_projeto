@@ -20,6 +20,9 @@ execute:
 #| label: setup
 #| echo: false
 
+# opções para exibição de números
+options(digits = 5,scipen = 999)
+
 # Carrega os pacotes necessários
 library(tidyverse) # Inclui o dplyr e outros 8 pacotes
 library(gapminder) # Conjunto de dados para os exemplos
@@ -424,6 +427,8 @@ e PIB per capita.
 ```{r}
 dados_expectativa <- select(gapminder, -pop, -gdpPercap)
 dados_expectativa
+
+head(dados_expectativa)
 ```
 
 
@@ -435,7 +440,9 @@ começam com a letra "c":
 ```{r}
 variaveis_com_c <- gapminder %>%
   select(starts_with("c"))
-variaveis_com_c
+
+
+head(variaveis_com_c)
 ```
 
 
@@ -446,7 +453,7 @@ até "pop" (em sequência na tabela).
 dados_expectativa <- gapminder %>%
   select(country:pop)
 
-dados_expectativa
+head(dados_expectativa)
 ```
 
 
@@ -458,7 +465,13 @@ diferentes na mesma instrução:
 
 
 ```{r}
-# seu código aqui
+# seleciona todas as variáveis que contêm a letra "p" OU
+# que terminam com "p"
+variaveis_combinadas <- gapminder %>%
+  select(contains("p") | ends_with("p"))
+
+# exibe as primeiras 6 linhas do resultado
+head(variaveis_combinadas)
 ```
 
 
@@ -652,15 +665,24 @@ Observe o fluxo de análise:
 do Sul no ano de 2007:
 
 ```{r}
-paises_america_2007 <- gapminder %>%
-  filter(continent == "___", year == ___)
+# dados apenas dos países da América do Sul no ano 2007
+paises_americas_2007 <- gapminder %>%
+  filter(continent == "Americas", year == 2007)
+
+# exibe as primeiras 6 linhas do resultado
+head(paises_americas_2007)
 ```
 
 
 2. Filtre a data frame gapminder para mostrar apenas os dados do Brasil:
 
 ```{r}
-# seu codigo aqui
+# dados apenas sobre o Brasil
+dados_brasil <- gapminder %>%
+  filter(country == "Brazil")
+
+# exibe as primeiras 6 linhas do resultado
+head(dados_brasil)
 ```
 
 
@@ -673,7 +695,14 @@ paises_america_2007 <- gapminder %>%
 - Dados do ano 2007
 
 ```{r}
-# seu codigo aqui
+paises_asia_populosos_2007 <- gapminder %>%
+  filter(continent == "Asia" &
+    pop > 50000000 &
+    year == 2007)
+
+# exibindo todos as observações (linhas)
+# do resultado
+print(paises_asia_populosos_2007, n = Inf)
 ```
 
 
@@ -681,7 +710,16 @@ paises_america_2007 <- gapminder %>%
 mas PIB per capita abaixo de 10.000 dólares em 2007.
 
 ```{r}
-# seu codigo aqui
+paises_desafio <- gapminder %>%
+  filter(
+    lifeExp > 75 &
+      gdpPercap < 10000 &
+      year == 2007
+  )
+
+# exibindo todos as observações (linhas)
+# do resultado
+print(paises_desafio, n = Inf)
 ```
 
 
@@ -727,7 +765,7 @@ vendas_analise <- gapminder %>%
   select(country, receita_milhoes, gdpPercap, destaque) %>%
   head(5)
 
-vendas_analise
+print(vendas_analise, n = Inf)
 ```
 
 **Interpretação administrativa:** Este tipo de transformação é usado 
@@ -820,7 +858,7 @@ paises_classificados <- gapminder %>%
   filter(year == 2007) %>%
   mutate(
     classe_desenvolvimento = case_when(
-      gdpPercap < 2000 ~ "Baixo",
+      gdpPercap < 2000 ~ "Baixa",
       gdpPercap < 10000 ~ "Médio",
       gdpPercap >= 10000 ~ "Alto"
     )
@@ -848,7 +886,7 @@ a população para milhões:
 
 ```{r}
 gapminder %>%
-  mutate(pop_em_milhoes = ___)
+  mutate(pop_em_milhoes = pop/1000000)
 ```
 
 
@@ -856,7 +894,12 @@ gapminder %>%
 (PIB per capita × população) para cada país.
 
 ```{r}
-# seu codigo aqui
+dados <- gapminder %>%
+  filter(year == 2007) %>%
+  mutate(PIB_total = gdpPercap * pop)
+
+# Exibir algumas linhas do resultado
+head(dados %>% select(country, gdpPercap, pop, PIB_total))
 ```
 
 
@@ -868,7 +911,12 @@ seja "Sim" quando a população for maior que 50 milhões e "Não"
 caso contrário.
 
 ```{r}
-# seu codigo aqui
+dados <- gapminder %>%
+  filter(year == 2007) %>%
+  mutate(economia_grande = ifelse(pop > 50000000, "Sim", "Não"))
+
+# Exibir algumas linhas do resultado
+head(dados %>% select(country, pop, economia_grande))
 ```
 
 
@@ -880,11 +928,30 @@ os países em três categorias baseadas na expectativa de vida:
 - "Alta": mais de 75 anos
 
 ```{r}
-# seu codigo aqui
+paises_classificados <- gapminder %>%
+  filter(year == 2007) %>%
+  mutate(
+    classe_desenvolvimento = case_when(
+      gdpPercap < 60 ~ "Baixa" ,
+      gdpPercap >= 60 & gdpPercap <= 75 ~ "Médio" ,
+      gdpPercap > 10000 ~ "Alto"
+    )
+  ) %>%
+  select(country, gdpPercap, classe_desenvolvimento) %>%
+  head(6)
+
+paises_classificados
 ```
 
-
-
+```{r}
+gapminder %>%
+  filter(year == 2007) %>%
+  summarise(
+    abaixo_60 = sum(gdpPercap < 60),
+    entre_60_75 = sum(gdpPercap >= 60 & gdpPercap <= 75),
+    acima_10000 = sum(gdpPercap > 10000)
+  )
+```
 
 
 # Função group_by() e summarize() 
