@@ -1040,15 +1040,24 @@ vida por continente:
 
 ```{r}
 expectativa_por_continente <- gapminder %>%
-  group_by(___) %>%
-  summarize(expectativa_media = ___(___))
+  group_by(continent) %>%
+  summarize(expectativa_media = mean(lifeExp))
+
+# Exibir o resultado
+expectativa_por_continente
 ```
 
 
 2. Calcule a população total por continente no ano de 2007.
 
 ```{r}
-# seu codigo aqui
+populacao_por_continente <- gapminder %>%
+  filter(year == 2007) %>%
+  group_by(continent) %>%
+  summarize(populacao_total = sum(pop))
+
+# Exibir o resultado
+populacao_por_continente
 ```
 
 
@@ -1062,7 +1071,17 @@ tabela que mostre, para cada continente:
 - O PIB per capita da melhor "filial" (máximo)
 
 ```{r}
-# seu codigo aqui
+tabela_filiais <- gapminder %>%
+  filter(year == 2007) %>%
+  group_by(continent) %>%
+  summarize(
+    numero_filiais = n(),  # Número de países (filiais)
+    pib_per_capita_medio = mean(gdpPercap),  # PIB per capita médio
+    melhor_filial_pib = max(gdpPercap)  # PIB per capita máximo
+  )
+
+# Exibir a tabela
+tabela_filiais
 ```
 
 
@@ -1071,7 +1090,14 @@ de vida média do continente americano ao longo dos anos (dica: agrupe
 por ano, filtre para mostrar apenas as Américas).
 
 ```{r}
-# seu codigo aqui
+expectativa_americana <- gapminder %>%
+  filter(continent == "Americas") %>%
+  group_by(year) %>%
+  summarize(expectativa_media = mean(lifeExp)) %>%
+  arrange(year)  # Ordena os anos de forma crescente
+
+# Exibir a tabela
+expectativa_americana
 ```
 
 
@@ -1123,14 +1149,25 @@ de vida (do maior para o menor):
 ```{r}
 paises_ordenados <- gapminder %>%
   filter(year == 2007) %>%
-  arrange(___(___))
+  arrange(desc(lifeExp))
+
+# Exibir os primeiros países ordenados
+head(paises_ordenados %>% select(country, lifeExp))
 ```
 
 
 2. Escreva um código para listar os 5 países com menor PIB per capita em 2007.
 
 ```{r}
-# seu codigo aqui
+# Filtrar o ano de 2007 e ordenar pelo menor PIB per capita
+paises_menor_pib <- gapminder %>%
+  filter(year == 2007) %>%
+  arrange(gdpPercap) %>%
+  select(country , gdpPercap) %>%
+  head(5)
+
+# Exibir os resultados
+paises_menor_pib
 ```
 
 
@@ -1141,7 +1178,13 @@ empresa. Crie uma lista dos países das Américas ordenados por
 população (do maior para o menor) em 2007.
 
 ```{r}
-# seu codigo aqui
+# Filtrar países das Américas e ordenar por população
+paises_americas <- gapminder %>%
+  filter(year == 2007 & continent == "Americas") %>%
+  arrange(desc(pop)) %>%
+  select(country, pop)
+
+paises_americas
 ```
 
 
@@ -1149,7 +1192,14 @@ população (do maior para o menor) em 2007.
 de vida média de seus países em 2007. Use group_by(), summarize() e arrange().
 
 ```{r}
-# seu codigo aqui
+ranking_continentes <- gapminder %>%
+  filter(year == 2007) %>%
+  group_by(continent) %>%
+  summarize(expectativa_media = mean(lifeExp)) %>%
+  arrange(desc(expectativa_media))
+
+# Exibir o ranking dos continentes
+ranking_continentes
 ```
 
 
