@@ -1,0 +1,250 @@
+---
+title: "Resolucão da Avaliação 1"
+subtitle: "Introdução à Ciência de Dados - 2025 <br> Bacharelado em Administração"
+author: "Gabrielle Ferreira Cardoso"
+title-block-banner: "#27445C"
+format:
+  html:
+    embed-resources: true
+    page-layout: article
+    toc: true
+    toc-location: left
+lang: "pt"
+date: 2025-05-14
+date-format: long
+execute: 
+  eval: false
+  echo: true
+  warning: false
+  message: false
+crossref:
+  fig-prefix: 'Fig.'
+  tbl-prefix: 'Tab.'
+---
+
+
+```{r}
+#| label: setup
+#| echo: false
+
+# configura a exibição de números
+options(digits = 3, scipen = 99)
+
+# pacotes utilizados
+library(here)
+library(tidyverse)
+library(kableExtra)
+```
+
+
+
+## Questão 1 
+
+
+**a)** 
+O dado que Lindsey Smith, gerente de marketing digital da Junglivet Whisky Company, busca entender melhor são os padrões de compra dos clientes no e-commerce e fazendo essa analise dos padrões de compra dos clientes do e-commerce da Junglivet, correlacionando dados demográficos, hábitos de consumo e resposta a campanhas de marketing para otimizar estratégias promocionais e aumentar a taxa de conversão em 15% nos próximos seis meses.
+Esse objetivo é fundamentado nas informações disponíveis no arquivo, como sexo, idade, nível de conhecimento sobre whisky, qualidade do crédito, tempo como cliente, método de pagamento, faturamento, resposta a anúncios e comportamento de devolução. Dessa forma, permite à equipe de marketing identificar padrões de compra e ajustar campanhas com base em dados reais para melhorar a performance do e-commerce.
+
+**b)** 
+Inicialmente para atender à necessidade apresentada por Lindsey deve começar com análise descritivas dos dados. Antes de aplicar qualquer método mais avançado é preciso compreender a estrutura dos dados disponíveis.A análise descritiva vai fornecer um resumo estruturado das características dos clientes e de seus hábitos de compra. Com base no arquivo csv, dados como sexo, idade, nível de conhecimento sobre whisky, qualidade do crédito, comportamento de devolução e outros podem ser explorados para compreender o perfil dos consumidores e suas preferências, então antes de avançar para análises mais sofisticadas, a exploração e a descrição dos dados são essenciais para garantir um entendimento sólido do comportamento de compra dos clientes e permitir que Lindsey e sua equipe façam escolhas estratégicas informadas.
+
+
+
+## Questão 2 
+
+
+**a)** 
+
+```{r}
+# Importa o arquivo de dados 
+
+## 1.1 Define o caminho relativo do arquivo no projeto RStudio
+caminho <- here::here("dados/brutos/onlineshop.csv")
+
+## 1.2 Importa o arquivo com a funçào read_csv
+dados_lojaonline <- readr::read_csv(caminho)
+
+```
+
+
+**b)** 
+
+```{r}
+# Estrutura e tipos das variáveis do banco de dados
+glimpse(dados_lojaonline)
+
+```
+
+
+**c.1)** 
+
+Foi apresentado 463 linhas(observações)
+
+**c.2.)** 
+
+São os dados que representão cada compra feita pelo cliente na loja.
+
+
+## Questão 3 (8 pontos)
+
+### Tópico: Limpeza e Preparação dos Dados 
+
+**a)** 
+
+```{r}
+
+dados_lojaonline_limpos <- dados_lojaonline %>% 
+    # Renomeia as colunas para nomes mais simples em português
+   rename(
+      data = DATE,
+      id_cliente = USER_ID,
+      idade = AGE,
+      sexo = GENDER,
+      tipo = TYPE,
+      score_de_credito = CREDIT_SCORE,
+      tempo_da_conta = LIFETIME,
+      metodo_pagamento = PAYMENT_METHOD,
+      faturamento = TURNOVER,
+      devolucao = SENDBACK,
+      tipo_de_anuncio = VIDEO_AD,
+      convertido = CONVERTED
+   ) %>% 
+    # Converte cada variável para o tipo/classe adequado
+   mutate(
+      data = as.Date(data),
+      id_cliente = as.factor(id_cliente),
+      idade = as.integer(idade),
+      sexo = as.factor(sexo),
+      tipo = as.factor(tipo),
+      score_de_credito = factor(score_de_credito, ordered = TRUE),
+      tempo_da_conta = as.integer(tempo_da_conta),
+      metodo_pagamento = as.factor(metodo_pagamento),
+      faturamento = as.numeric(faturamento),
+      devolucao = as.logical(devolucao),
+      tipo_de_anuncio = as.logical(tipo_de_anuncio),
+      convertido = as.logical(convertido)
+   )
+
+# exibe a estrutura da data frame limpa
+dplyr::glimpse(dados_lojaonline_limpos)
+```
+
+
+**b)** 
+
+```{r}
+# Achar o cliente com mais transações
+# Mostrar o resumo estatístico do conjunto de dados
+summary(dados_lojaonline_limpos)
+dados_lojaonline_limpos %>%
+    count(id_cliente) %>%
+    arrange(desc(n)) %>%
+    head(1) #cliente com maior número de compras
+```
+
+
+**b.1)** 
+O cliente com o ID ron_swanson76 fez	15	compras
+
+**b.2)** 
+```{r}
+# Contar quantos clientes não possuem classificação no campo "tipo"
+dados_lojaonline_limpos %>%
+    filter(is.na(tipo)) %>%
+    summarise(total_clientes_sem_classificacao = n())
+```
+
+**b.3)** 
+```{r}
+# Calcular estatísticas do faturamento
+dados_lojaonline_limpos %>%
+    summarise(
+        faturamento_medio = mean(faturamento, na.rm = TRUE), # Média do faturamento
+        faturamento_maximo = max(faturamento, na.rm = TRUE), # Faturamento máximo
+        faturamento_minimo = min(faturamento, na.rm = TRUE)  # Faturamento mínimo
+    )
+```
+- Faturamento médio = 182
+
+- Faturamento máximo = 718
+
+- Faturamento mínimo = 31
+
+
+
+
+## Questão 4 (10 pontos)
+
+ 
+**a)** 
+
+
+```{r}
+
+faturamento_medio_pagamento <- dados_lojaonline_limpos %>% 
+   group_by(metodo_pagamento) %>% 
+   summarize(faturamento_medio = mean(faturamento)) %>% 
+   arrange(desc(faturamento_medio))
+
+# exibe o resultado
+faturamento_medio_pagamento
+```
+
+
+
+**b)** 
+
+
+```{r}
+
+clientes_especificos <- dados_lojaonline_limpos %>% 
+   filter(id_cliente %in% c("ron_swanson76", "horst_lüning", "dorothy_parker")) %>% 
+   group_by(id_cliente) %>% 
+   summarize(faturamento_medio_clientes = mean(faturamento)) %>% 
+   arrange(desc(faturamento_medio_clientes))
+
+# exibe o resultado
+clientes_especificos
+```
+
+
+**c)** 
+
+
+```{r}
+
+dados_conversao <- dados_lojaonline_limpos %>% 
+   group_by(tipo_de_anuncio) %>% 
+   summarize(
+      total_de_clientes = n(),
+      porcentagem_de_conversao = mean(convertido),
+      faturamento_medio_por_anuncio = mean(FATU)
+   )
+
+# exibe o resultado 
+dados_conversao
+```
+
+**d)** 
+
+
+```{r}
+
+analise_tipo_cliente <- dados_lojaonline_limpos %>%
+  # Agrupa os dados pelo tipo de cliente
+  group_by(tipo) %>%
+  # Calcula as estatísticas solicitadas para cada grupo
+  summarize(
+    total_transacoes = n(),
+    devolucao = mean(devolucao) * 100,  # Converte proporção para porcentagem
+    faturamento_medio = mean(faturamento),
+    faturamento_sem_devolucao = mean(faturamento[devolucao == FALSE])
+  )
+
+# exibe o resultado 
+analise_tipo_cliente
+```
+
+
+
+

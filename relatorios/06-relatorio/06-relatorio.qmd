@@ -2,7 +2,7 @@
 title: "Organização de Dados com o Pacote tidyr"
 subtitle: "Continuação do Relatório 5"
 lang: pt-BR
-author: "Seu Nome"
+author: "gabrielle"
 date: 2025-05-09
 format: 
   html:
@@ -411,7 +411,14 @@ data frame **dados_vendas_longo**.
 de vendas por categoria e ordene do maior para o menor.
 
 ```{r}
-# seu código aqui
+# Calcula a média de vendas por categoria e ordena do maior para o menor
+media_vendas_categoria <- dados_vendas_longo %>%
+  group_by(categoria) %>%
+  summarize(media_vendas = mean(valor_vendas)) %>%
+  arrange(desc(media_vendas))
+
+# Visualiza o resultado
+media_vendas_categoria
 ```
 
 
@@ -424,7 +431,15 @@ da categoria "Mobiliário" e mostre as vendas totais de cada produto
 desta categoria, ordenando do maior para o menor.
 
 ```{r}
-# seu código aqui
+# Filtra os produtos da categoria "Mobiliário" e calcula as vendas totais por produto
+vendas_mobiliario <- dados_vendas_longo %>%
+  filter(categoria == "Mobiliário") %>%
+  group_by(produto) %>%
+  summarize(vendas_totais = sum(valor_vendas)) %>%
+  arrange(desc(vendas_totais))
+
+# Visualiza o resultado
+vendas_mobiliario
 ```
 
 
@@ -437,6 +452,19 @@ valor mínimo e o valor máximo para cada categoria, ordenando do maior
 para o menor valor total.
 
 ```{r}
+# Analisa o desempenho mensal por categoria
+desempenho_mensal_categoria <- dados_vendas_longo %>%
+  group_by(categoria) %>%
+  summarize(
+    vendas_total = sum(valor_vendas),
+    vendas_media = mean(valor_vendas),
+    vendas_min = min(valor_vendas),
+    vendas_max = max(valor_vendas)
+  ) %>%
+  arrange(desc(vendas_total))
+
+# Visualiza o resultado
+desempenho_mensal_categoria
 ```
 
 
