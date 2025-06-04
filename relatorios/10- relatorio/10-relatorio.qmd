@@ -2,7 +2,7 @@
 title: "Fundamentos de Probabilidade para Decisões - Parte 2"
 subtitle: "Características da Distribuição de Probabilidade de Variáveis Aleatórias"
 lang: pt-BR
-author: "Seu Nome"
+author: "Gabrielle Ferreira"
 date: 2025-05-28
 format: 
   html:
@@ -656,7 +656,7 @@ ggplot(dados, aes(x = acao_a, y = acao_b)) +
 
 Interpretação:
 
-- Analisando o gráfico de dispersão, parece haver uma correlação negativa forte 
+- Analisando o gráfico de dispersão, parece haver uma correlação positiva forte 
 entre os retornos das ações A e B, indicando que quando uma ação tem um retorno 
 positivo, a outra tende a ter um retorno negativo, e vice-versa.
 
@@ -830,6 +830,7 @@ estimativas da empresa.
 **Procedimento**
 
 1. Realizar 10.000 simulações.
+
 
 2. Em cada simulação, selecionar um cenário com base nas probabilidades e 
 registrar o retorno correspondente.
