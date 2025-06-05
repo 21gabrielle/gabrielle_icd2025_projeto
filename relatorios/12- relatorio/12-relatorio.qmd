@@ -371,7 +371,7 @@ histograma_densidade <-
   # adiciona um histograma
   geom_histogram(
     aes(y = after_stat(density)), # normaliza o histograma
-    bins = 10,
+    bins = 11,
     fill = "#E6F2FF",     # azul muito claro para as barras
     color = "#2E5984"     # azul escuro para borda das barras
   ) +
