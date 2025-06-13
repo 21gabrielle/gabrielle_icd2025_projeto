@@ -1,0 +1,363 @@
+---
+title: "Soluções da Lista de Exercícios - Treinamento para a Avaliação 2"
+subtitle: "Introdução à Ciência de Dados <br> Bacharelado em administração"
+author: "Prof. Dr. Washington S. da Silva"
+title-block-banner: "#27445C"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-location: left
+    code-copy: true
+    css: styles.css
+lang: "pt"
+date: 2025-06-13
+execute: 
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| echo: false
+
+# configura exibição de números
+options(digits = 5, scipen = 999)
+
+# carrega pacotes
+library(tidyverse)  # Inclui dplyr, tidyr, ggplot2...
+library(scales)     # pacote do tidyverse para formatação de números
+library(tidyquant)  # para importar dados do Yahoo Finance
+library(effectsize) #
+```
+
+
+
+## Tópico: Distribuição Normal — Probabilidades e Quantis
+
+### Exercício 1
+
+
+
+## Solução do Exercício 1
+
+1. Qual a probabilidade de um pedido ser entregue em até **7 dias**?
+
+```{r}
+# Parâmetros da distribuição normal fornecidos pelo problema:
+media_nova <- 5        # Média de 5 dias
+desvio_padrao_novo <- 2 # Desvio padrão de 2 dias
+
+# Valor para o qual queremos calcular a probabilidade acumulada (até 7 dias)
+valor_limite <- 7
+
+# Calcula a probabilidade de um pedido ser entregue em até 7 dias (P(X <= 7))
+# pnorm() é a função de distribuição acumulada para a distribuição normal
+prob_ate_7_dias_novo <- pnorm(q = valor_limite, mean = media_nova, sd = desvio_padrao_novo)
+
+# Exibe o resultado como uma probabilidade (valor decimal)
+prob_ate_7_dias_novo
+
+# Opcional: Exibe o resultado em porcentagem para melhor interpretação
+prob_ate_7_dias_novo_pct <- prob_ate_7_dias_novo * 100
+prob_ate_7_dias_novo_pct
+```
+
+2. Qual a probabilidade de a entrega demorar **mais de 10 dias**?
+
+```{r}
+# Parâmetros da distribuição normal
+media <- 5        # Média de 5 dias
+desvio_padrao <- 2 # Desvio padrão de 2 dias
+
+# Valor limite
+valor_limite <- 10
+
+# Probabilidade de a entrega demorar MAIS de 10 dias (P(X > 10))
+# Isso é 1 - P(X <= 10)
+prob_mais_de_10_dias <- 1 - pnorm(q = valor_limite, mean = media, sd = desvio_padrao)
+
+# Exibe o resultado como uma probabilidade (valor decimal)
+prob_mais_de_10_dias
+
+# Opcional: Exibe o resultado em porcentagem para melhor interpretação
+prob_mais_de_10_dias_pct <- prob_mais_de_10_dias * 100
+prob_mais_de_10_dias_pct
+```
+
+3. Qual é o prazo máximo de entrega para que **80%** dos pedidos sejam 
+entregues até essa data?
+
+```{r}
+# Parâmetros da distribuição normal
+media <- 5        # Média de 5 dias
+desvio_padrao <- 2 # Desvio padrão de 2 dias
+
+# Probabilidade desejada (80%)
+probabilidade <- 0.80
+
+# Calcula o prazo máximo (quantil) para que 80% dos pedidos sejam entregues
+# qnorm() é a função de quantil para a distribuição normal
+prazo_maximo_80_pct <- qnorm(p = probabilidade, mean = media, sd = desvio_padrao)
+
+# Exibe o resultado
+prazo_maximo_80_pct
+```
+
+
+4. Forneça uma interpretação para os resultados obtidos em cada item.
+
+# A probabilidade de um pedido ser entregue em até 7 dias é de aproximadamente 84.13%. Isso significa que, dos pedidos feitos, cerca de 84.13% são concluídos em 7 dias ou menos.A entrega demorar mais de 10 dias é de aproximadamente 0.62%. Ou seja, um número muito pequeno de pedidos, cerca de 0.62%, excederá um prazo de entrega de 10 dias.O prazo máximo de entrega para que 80% dos pedidos sejam concluídos é de aproximadamente 6.68 dias. Isso é uma informação valiosa para a loja online, pois indica que, para cumprir o prazo para a grande maioria (80%) dos clientes, o sistema de entrega deve garantir que os pedidos cheguem em até 6.68 dias.
+
+
+## Tópico: Valor-em-Risco (VaR) com Distribuição Normal
+
+### Exercício 2
+
+
+```{r}
+
+# seu código aqui
+# Parâmetros do investimento
+valor_aplicado <- 50000        # Capital investido (R$)
+retorno_medio_mensal <- 0.01   # 1% em decimal
+volatilidade_mensal <- 0.04    # 4% em decimal (desvio padrão)
+nivel_confianca <- 0.95        # 95% de confiança
+```
+
+
+Cálculo do VaR percentual:
+
+```{r}
+# seu código aqui
+# Para VaR de 95% de confiança, procuramos o quantil da cauda inferior de (1 - 0.95) = 0.05
+# qnorm() retorna o valor no qual 'p' porcento dos dados estão abaixo dele
+quantil_retorno <- qnorm(p = (1 - nivel_confianca),
+                         mean = retorno_medio_mensal,
+                         sd = volatilidade_mensal)
+
+# O VaR percentual é o valor absoluto do quantil do retorno.
+# Multiplicamos por 100 para exibir em formato de porcentagem.
+var_percentual <- abs(quantil_retorno) * 100
+var_percentual
+```
+
+VaR em reais (valor absoluto da perda):
+
+```{r}
+# seu código aqui
+# O VaR em reais é o VaR percentual (em decimal) multiplicado pelo valor aplicado
+# Dividimos por 100 porque var_percentual está em porcentagem (ex: 5.86%)
+var_reais <- (var_percentual / 100) * valor_aplicado
+var_reais
+```
+
+ 
+**Interpretação:**
+
+
+
+
+
+## Tópico: Simulação de Monte Carlo e Valor Esperado
+
+### Exercício 3
+
+1. Calcule o prêmio **justo** (valor esperado).
+
+```{r}
+prob_roubo <- 0.02         # 2% de probabilidade anual de roubo
+valor_indenizacao <- 4000  # R$ 4.000 de indenização
+margem_desejada <- 0.20    # 20% de margem de lucro (em decimal)
+num_residencias_simulacao <- 10000 # Número de residências para a simulação de Monte Carlo
+
+# seu código aqui
+premio_justo <- prob_roubo * valor_indenizacao
+premio_justo
+
+```
+
+2. Determine o prêmio com a margem de lucro.
+
+```{r}
+# seu código aqui
+premio_com_margem <- premio_justo * (1 + margem_desejada)
+premio_com_margem
+```
+
+3. Simule 10.000 residências seguradas e estime o valor médio pago.
+
+```{r}
+# seu código aqui
+# Simula as ocorrências de roubo para cada residência
+# rbinom(n, size, prob) simula 'n' tentativas (residências), onde cada uma tem 'size' (1) chance
+# de "sucesso" (roubo) com a 'prob' dada.
+# O resultado será um vetor de 0s (sem roubo) e 1s (com roubo).
+ocorrencias_roubo_simuladas <- rbinom(n = num_residencias_simulacao,
+                                      size = 1,
+                                      prob = prob_roubo)
+
+# Calcula o valor total de indenizações pagas na simulação
+total_indenizacoes_simulado <- sum(ocorrencias_roubo_simuladas * valor_indenizacao)
+
+# Estima o valor médio pago por residência na simulação
+valor_medio_pago_simulado <- total_indenizacoes_simulado / num_residencias_simulacao
+
+valor_medio_pago_simulado
+```
+
+
+**Interpretação:**
+
+
+
+
+## Tópico: Quantis e Tomada de Decisão em Administração
+
+### Exercício 4
+
+Os salários de 30 trainees são (execute o código abaixo para criar 
+o vetor `salarios`):
+
+```{r}
+salarios <- c(2300, 2500, 2200, 2400, 2800, 3000, 3200, 2500, 2100, 2700,
+              2600, 2300, 2900, 3100, 2000, 2800, 2600, 2500, 2750, 2250,
+              2900, 2300, 2600, 2700, 2950, 2450, 2550, 2650, 2400, 2750)
+```
+
+
+1. Calcule os quartis 1 (Q1), 2 (mediana) e 3 (Q3).
+
+```{r}
+# seu código aqui
+# A função quantile() é perfeita para isso!
+# Ela recebe o vetor de dados e uma porcentagem (ou vetor de porcentagens)
+# para calcular os percentis.
+# Para Q1, Q2 (mediana) e Q3, as porcentagens são 25%, 50% e 75%.
+quartis <- quantile(salarios, probs = c(0.25, 0.50, 0.75))
+
+# Exibindo os resultados dos quartis
+print("Os quartis dos salários são:")
+print(quartis)
+
+# Apenas para reforçar: a mediana pode ser calculada diretamente também:
+mediana_salarios <- median(salarios)
+print(paste("A mediana (Q2) dos salários é: R$", round(mediana_salarios, 2)))
+```
+
+2. Qual o salário máximo que **80%** dos trainees recebem?
+
+Estimativa do percentil 80:
+
+```{r}
+# seu código aqui
+percentil_80_salarios <- quantile(salarios, probs = 0.80)
+percentil_80_salarios
+```
+
+
+3. Como essas informações podem auxiliar o setor de RH?
+
+#Com essas informações, o RH consegue montar salários mais justos e que chamem a atenção no mercado, ajudando a oferecer um bom dinheiro e a gerenciar o que a equipe espera de crescimento. Além disso, fica mais fácil achar salários que não batem e ver se tem alguma diferença, buscando um ambiente de trabalho mais justo para todo mundo. Resumindo, transformar um monte de números em algo que dá para usar de verdade, faz com que o RH decida melhor sobre quanto pagar, gaste menos e continue atraindo os melhores talentos.
+
+
+## Tópico: Correlação e Diversificação de Carteiras
+
+### Exercício 5
+
+1. Use `tq_get()` para baixar as séries de preços das ações da Vale 
+(VALE3) e do Bradesco (BBDC4) desde `2024-01-01`
+
+```{r}
+# seu código aqui
+# Baixa os dados de fechamento das ações
+dados_acoes_ex5 <- c("VALE3.SA", "BBDC4.SA") %>%
+  tq_get(from = "2024-01-01") %>%
+  select(symbol, date, close) %>%
+  rename(empresa = symbol,
+         data = date,
+         preco = close)
+
+# Exibe as primeiras linhas para verificar os dados importados
+head(dados_acoes_ex5)
+```
+
+2. Organize os dados com `pivot_wider()`.
+
+```{r}
+# seu código aqui
+# Transforma os dados do formato longo para o formato largo
+dados_correlacao_ex5 <- dados_acoes_ex5 %>%
+  pivot_wider(
+    names_from = empresa, # A coluna 'empresa' (symbol) se tornará os nomes das novas colunas
+    values_from = preco   # Os valores de 'preco' (close) preencherão essas novas colunas
+  ) %>%
+  # Renomeia as colunas para facilitar o uso no R
+  rename(vale = "VALE3.SA", bradesco = "BBDC4.SA")
+
+# Exibe as primeiras linhas dos dados transformados
+head(dados_correlacao_ex5)
+```
+
+3. Calcule a **correlação de Pearson** entre os preços e 
+interprete sua magnitude usando os critérios propostos 
+por Cohen (1988).
+
+Estimativa do coeficiente de correlação de Pearson:
+
+```{r}
+# seu código aqui
+# Calcula o coeficiente de correlação de Pearson entre as colunas 'vale' e 'bradesco'
+# use = "complete.obs" é importante para lidar com possíveis valores ausentes (NAs)
+correlacao_vale_bradesco <- cor(dados_correlacao_ex5$vale,
+                                dados_correlacao_ex5$bradesco,
+                                method = "pearson",
+                                use = "complete.obs")
+round(correlacao_vale_bradesco, digits = 4)
+```
+
+Interpretação da magnitude usando a função interpret_r do pacote 
+effectsize:
+
+```{r}
+# seu código aqui
+# Interpreta a magnitude do coeficiente de correlação usando as regras de Cohen (1988)
+interpret_r(correlacao_vale_bradesco, rules = "cohen1988")
+```
+
+**Interpretação:**
+
+
+
+4. Crie um gráfico de dispersão com reta de regressão para as 
+séries de preços e interprete do gráfico considerando o coeficiente de 
+correlação de Pearson estimado
+
+```{r}
+# seu código aqui
+# Cria o gráfico de dispersão
+grafico_dispersao_vale_bradesco <-
+  ggplot2::ggplot(dados_correlacao_ex5, ggplot2::aes(x = vale, y = bradesco)) +
+  ggplot2::geom_point(alpha = 0.6) + # Adiciona pontos com transparência para melhor visualização de sobreposições
+  ggplot2::geom_smooth(method = "lm", se = FALSE, color = "red") + # Adiciona a reta de regressão linear (sem intervalo de confiança)
+  ggplot2::labs(title = "Relação entre Preços das Ações da Vale (VALE3) e Bradesco (BBDC4)",
+                x = "Preço de Fechamento VALE3 (R$)",
+                y = "Preço de Fechamento BBDC4 (R$)",
+                caption = "Fonte: Yahoo Finance") +
+  ggplot2::theme_minimal() # Aplica um tema minimalista para o gráfico
+
+# Exibe o gráfico
+grafico_dispersao_vale_bradesco
+```
+
+
+**Interpretação:**
+
+
+5. Avalie se uma carteira formada por essas duas ações poderia ser 
+considerada bem diversificada, com base na correlação estimada e 
+na análise do gráfico de dispersão.
+
+#Do ponto de vista de diversificação de uma carteira de investimentos, essa correlação positiva não é uma característica desejável. Ao combinar ativos que se movem na mesma direção, o investidor não reduz o risco total da carteira, pois as perdas em um ativo não podem ser compensadas por ganhos no outro. Portanto, com base na correlação positiva observada, essa carteira não seria considerada bem diversificada. Idealmente, uma boa diversificação exige a combinação de ativos com correlação próxima de zero ou negativa.
+**Interpretação:**
