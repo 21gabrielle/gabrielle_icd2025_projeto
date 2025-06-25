@@ -1,0 +1,375 @@
+---
+title: "Avaliação 2 - Valor: 33 pontos"
+subtitle: "Introdução à Ciência de Dados - 2025 <br> Bacharelado em Administração"
+author:   
+  - Gabrielle Ferreira  
+  - Rafaella Candelari
+  - Gabriela Silva
+title-block-banner: "#27445C"
+format:
+  html:
+    embed-resources: true
+    page-layout: article
+    toc: true
+    toc-location: left
+lang: "pt"
+date: 2025-06-18
+date-format: long
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+
+```{r}
+#| label: setup
+#| echo: false
+
+# pacotes utilizados
+library(here)
+library(tidyverse)
+library(tidyquant)
+library(effectsize)
+```
+
+
+
+## Questão 1
+
+**a)**
+Probabilidade anual de sinistro|1%
+Indenização média por sinistro|R$ 150.000
+Margem-alvo sobre o prêmio puro|25%
+
+```{r}
+prob_sinistro <- 0.01 
+indenizacao_sinistro <- 150000 
+
+# Cálculo do prêmio 
+premio_justo <- prob_sinistro * indenizacao_sinistro
+premio_justo
+```
+
+
+**b)**
+
+```{r}
+margem_alvo <- 0.25 
+
+# Cálculo do prêmio comercial
+premio_comercial <- premio_justo * (1 + margem_alvo)
+premio_comercial
+```
+
+
+**c)** 
+
+```{r}
+## fixa a semente para reprodutibilidade
+set.seed(2025)
+
+## simula o custo para 10 residências seguradas
+custos_10 <- sample(
+  c(0, 150000),        # preencha com os dois valores de custos possíveis: sem sinistro e com sinistro
+  size = 10,          # número total de residências a serem simuladas
+  replace = TRUE,       # indique se a amostragem será com reposição
+  prob = c(1 - 0.01, 0.01)  # probabilidades de cada um dos dois resultados (sinistro e não sinistro)
+  ) 
+
+## estimativa do custo médio por apólice com 10 residências seguradas
+mean(custos_10)         
+```
+
+
+Simulação dos custos médios com 100 residências seguradas:
+
+```{r}
+set.seed(2025) # Mantém 
+
+custos_100 <- sample(
+  c(0, 150000),
+  size = 100, # 100 residências
+  replace = TRUE,
+  prob = c(1 - 0.01, 0.01)
+)
+
+mean(custos_100) # Custo médio para 100 residências
+```
+
+
+Simulação dos custos médios com 1000 residências seguradas:
+
+```{r}
+set.seed(2025) # Mantém 
+
+custos_1000 <- sample(
+  c(0, 150000),
+  size = 1000, # 1000 residências
+  replace = TRUE,
+  prob = c(1 - 0.01, 0.01)
+)
+
+mean(custos_1000) # Custo médio para 1000 residências
+```
+
+
+**d)**
+
+Pela Lei dos Grandes Números,pois em muitas apólices, o custo médio se aproxima do valor esperado, tornando o negócio previsível e lucrativo a longo prazo.
+
+
+**e)**
+Diminui pois o segurado arca com R$ 50.000 comisso ela pode ela pode cobrar um premio menor do cliente, ou manter o prêmio e aumentar sua margem de lucro.
+
+
+## Questão 2
+
+**a)** 
+
+```{r}
+media_entrega <- 6.5       # Média de 6.5 dias
+desvio_padrao_entrega <- 1.8 # Desvio padrão de 1.8 dias
+
+prob_sup_8_dias <- 1 - pnorm(q = 8, mean = media_entrega, sd = desvio_padrao_entrega)
+
+#RESULTADO
+prob_sup_8_dias
+
+prob_sup_8_dias_pct <- prob_sup_8_dias * 100
+prob_sup_8_dias_pct
+```
+
+
+**b)** 
+
+```{r}
+prazo_maximo_90_pct <- qnorm(p = 0.90, mean = media_entrega, sd = desvio_padrao_entrega)
+
+#RESULTADO
+prazo_maximo_90_pct
+```
+
+
+**c)** 
+
+```{r}
+# Probabilidade de do prazo de 7 dias 
+prob_cumprir_7_dias <- pnorm(q = 7, mean = media_entrega, sd = desvio_padrao_entrega)
+
+#RESULTADO
+prob_cumprir_7_dias
+
+prob_cumprir_7_dias_pct <- prob_cumprir_7_dias * 100
+prob_cumprir_7_dias_pct
+```
+
+
+## Questão 3
+
+
+**a)** 
+
+```{r}
+# Parâmetros fornecidos
+media_vendas <- 18500
+desvio_padrao_vendas <- 2300
+vendas_loja <- 21800
+
+score_z <- (vendas_loja - media_vendas) / desvio_padrao_vendas
+score_z
+```
+
+Reposta:
+
+
+**b)** 
+
+```{r}
+prob_acumulada <- pnorm(q = vendas_loja, mean = media_vendas, sd = desvio_padrao_vendas)
+prob_acumulada_pct <- prob_acumulada * 100
+prob_acumulada_pct
+```
+
+RESPOSTA: Significa que a loja teve um desempenho superior das outras lojas e só 7%, das lojas teve um desempenho igual ou melhor que o dela naquele dia
+  
+
+
+**c)**
+```{r}
+percentil_90_vendas <- qnorm(p = 0.90, mean = media_vendas, sd = desvio_padrao_vendas)
+percentil_90_vendas
+
+# Compara as vendas da loja com o limite do percentil 90
+desempenho_excepcional <- vendas_loja > percentil_90_vendas
+```
+RESPOSTA: Muito bom pois superou 10%
+
+
+## Questão 4
+
+**a)**
+
+```{r}
+# Parâmetros 
+retorno_medio_portfolio <- 0.011   
+desvio_padrao_portfolio <- 0.042   
+valor_investimento_atual <- 400000 
+nivel_confianca_var <- 0.99 
+
+#Calculo do quantil do retorno correspondente ao nível de confiança
+quantil_retorno_var <- qnorm(p = (1 - nivel_confianca_var),
+                             mean = retorno_medio_portfolio,
+                             sd = desvio_padrao_portfolio)
+
+# Porcentagem
+var_percentual_q4 <- abs(quantil_retorno_var) * 100
+
+```
+
+Cálculo do VaR 99% percentual:
+
+```{r}
+var_monetario_q4 <- (var_percentual_q4 / 100) * valor_investimento_atual
+#RESULTADO
+cat("VaR Percentual (99% de confiança): ", round(var_percentual_q4, 2), "%\n")
+
+```
+
+Cálculo do VaR 99% monetário (valor absoluto da perda):
+
+```{r}
+cat("VaR Monetário (99% de confiança): R$ ", round(var_monetario_q4, 2), "\n")
+```
+
+
+
+**b)**
+Em 99% dos meses, a perda esperada para esta aplicação não deve exceder R$ 34.683,00
+
+
+
+**c)**
+
+A assimetria e a curtose elevada (caudas gordas). A assimetria negativa implica
+que grandes perdas são mais frequentes do que o previsto por uma curva normal
+simétrica. Já as caudas gordas indicam que eventos extremos (grandes oscilações)
+ocorrem com mais frequência do que a distribuição normal.
+
+
+
+## Questão 5
+
+- [ ] A 
+
+- [ ] B 
+
+- [ ] C 
+
+- [X] D 
+
+- [ ] E 
+
+
+Por que as demais estão erradas?
+
+- **A** - Apesar de ter um numero absoluto pequeno a taxa de Santa Luzia é a 
+segunda maior
+
+  
+- **B** - As políticas públicas são ações que os governos precisam atender o 
+direito das mulheres, garantindo a segurança delas e não colocando-as como 
+responsaveis
+  
+- **C** - Está errada pois esses paises tem os maiores numeros absolutos e
+não as maiores taxas como Honduras, Santa Lúcia e Trindade e Tobago.
+
+  
+- **E** - Não pois apesar do numero total ser elevado ainda existem taxas maiores
+
+
+
+## Questão 6
+
+
+**a)** 
+
+
+```{r}
+dados_precos <- c("PETR4.SA", "WEGE3.SA") %>%
+  tidyquant::tq_get(from = "2024-01-01") %>%
+  dplyr::select(symbol, date, close) %>%
+  tidyr::pivot_wider(names_from = symbol, values_from = close) %>%
+  dplyr::rename(petrobras = "PETR4.SA", weg = "WEGE3.SA")
+#RESULTADO
+head(dados_precos)
+```
+
+
+**b.1)** 
+   
+```{r}
+# cálculo dos retornos logarítmicos
+dados_ret <- dados_precos %>% 
+# a função `mutate()` adiciona as colunas de retornos
+mutate(ret_petrobras = log(petrobras / lag(petrobras)),
+     ret_weg       = log(weg       / lag(weg))) %>% 
+# drop_na remove a linha com retorno faltante (NA)
+drop_na()
+
+# exibição das primeiras linhas
+head(dados_ret)
+```
+
+
+
+**b.2)** 
+
+```{r}
+correlacao_retornos_log <- cor(dados_ret$ret_petrobras,
+                               dados_ret$ret_weg,
+                               method = "pearson",
+                               use = "complete.obs") # Ignora NAs se houver
+#RESULTADO
+round(correlacao_retornos_log, digits = 4)
+```
+
+
+**b.3)** 
+
+```{r}
+interpret_r(correlacao_retornos_log, rules = "cohen1988")
+
+interpretacao_cohen_retornos <- as.character(interpret_r(correlacao_retornos_log, rules = "cohen1988"))
+```
+
+**Interpretação:**
+
+
+
+**c)** 
+
+```{r}
+# Datas mínima e máxima para o subtítulo
+data_min <- min(dados_ret$date)
+data_max <- max(dados_ret$date)
+
+grafico_dispersao_retornos <- ggplot(dados_ret, aes(x = ret_petrobras, y = ret_weg)) +
+  geom_point(alpha = 0.6) + # Pontos com transparência
+  geom_smooth(method = "lm", se = FALSE, color = "blue") + # Reta de regressão linear em azul
+  labs(title = "Dispersão dos Retornos Logarítmicos Diários",
+       subtitle = paste0("PETR4.SA vs WEGE3.SA (Período: ", format(data_min, "%d/%m/%Y"), " a ", format(data_max, "%d/%m/%Y"), ")"),
+       x = "Retorno Logarítmico PETR4.SA",
+       y = "Retorno Logarítmico WEGE3.SA",
+       caption = "Fonte: Yahoo Finance") +
+  theme_minimal()
+#RESULTADO
+grafico_dispersao_retornos
+```
+
+
+**Interpretação:**
+
+
+**d)** 
+ESsa combinação pertencerem a setores diferentes, isso indica que elas tendem a se mover na mesma direção o que não otimiza a redução de riscos, seria melhor ter uma correlação mais baixas.
