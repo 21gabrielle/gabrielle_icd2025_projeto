@@ -2,8 +2,7 @@
 
 Este repositório contém materiais e projetos desenvolvidos para 
 a disciplina de Introdução à Ciência dos Dados do Bacharelado 
-em Administração do IFMG - Campus Formiga, cursada no primeiro 
-semestre de 2025.
+em Administração do IFMG - Campus Formiga, cursada no terceiro periodo em 2025.
 
 
 ## O que estou aprendendo nesta disciplina?
@@ -40,16 +39,28 @@ Isso inclui:
 - **Status:** [Não iniciado / Em andamento / Concluído]
 - **O que aprendi:** [Preencher durante ou após a conclusão]
 
+### Avaliação 2
 
-## Anotações e Dicas Importantes
+Tema: Análise de Dados, Probabilidades e Gestão de Risco em Contextos de Negócios e Finanças
 
-[Aqui você pode adicionar lembretes, dicas ou comandos úteis 
-que aprendeu durante as aulas.]
+Data de entrega: [Data]
 
-- Anotação ou dica 1
+Status: [Concluído]
 
-- Anotação ou dica 2
-
+O que aprendi: Nesta atividade, explorei conceitos fundamentais
+de estatística e suas aplicações em cenários práticos. Aprendi a
+calcular probabilidades e quantis utilizando a distribuição normal 
+para estimar prazos de entrega e determinar limites de entrega para 
+uma porcentagem específica de pedidos. Aprofundei-me na gestão de riscos
+financeiros através do cálculo e interpretação do Valor-em-Risco (VaR),
+compreendendo sua aplicação na análise de perdas potenciais em 
+investimentos. Além disso, a importância da simulação
+para validar cálculos teóricos e entender a variabilidade dos eventos ao
+longo do tempo. No contexto de recursos humanos, pratiquei o cálculo de
+quantis para analisar a distribuição salarial e utilizei essas métricas 
+para auxiliar na tomada de decisões estratégicas. Por fim, explorei o 
+conceito de correlação entre ativos financeiros, avaliando como essa medida
+impacta a diversificação de carteiras de investimento e a redução de riscos.
 
 
 # Glossário de Termos
@@ -58,14 +69,6 @@ Este glossário apresenta uma **versão inicial** dos termos relacionados
 às ferramentas, tecnologias e métodos que utilizaremos na disciplina de 
 Introdução à Ciência de Dados: RStudio, R, Quarto, Markdown, 
 Git e GitHub, Fundamentos de Probabilidade e Estatística.
-
-> **IMPORTANTE**: Este é apenas um ponto de partida. Você deve 
-assumir o protagonismo na ampliação e manutenção deste glossário, 
-adicionando novos termos e conceitos à medida que avança no seu 
-aprendizado. Anote definições de conceitos que encontrar durante as 
-aulas e leituras, reescreva explicações com suas próprias palavras e 
-personalize este recurso para que ele realmente apoie seu 
-desenvolvimento na disciplina.
 
 O glossário que você construir será uma ferramenta valiosa não apenas 
 durante este semestre, mas também em seus futuros estudos e atividades 
